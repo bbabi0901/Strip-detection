@@ -47,9 +47,9 @@ class instance_custom_training:
     #        print("Using resnet50 as network backbone For Mask R-CNN model")
 
 
-    def modelConfig(self, network_backbone = "resnet101", num_classes = 1, class_names = ["BG"], batch_size=1, detection_threshold = 0.7):
+    def modelConfig(self, network_backbone = "resnet101", num_classes = 1, class_names = ["BG"], batch_size=1, detection_threshold = 0.7, gpu_count = 1):
         self.config = Config(BACKBONE = network_backbone, NUM_CLASSES = 1 +  num_classes,  class_names = class_names, 
-                            IMAGE_PER_GPU = batch_size, DETECTION_MIN_CONFIDENCE = detection_threshold)
+                            IMAGES_PER_GPU = batch_size, DETECTION_MIN_CONFIDENCE = detection_threshold, GPU_COUNT = gpu_count)
 
         if network_backbone == "resnet101":
             print("Using resnet101 as network backbone For Mask R-CNN model")
