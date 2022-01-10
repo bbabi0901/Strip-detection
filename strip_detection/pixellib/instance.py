@@ -463,7 +463,7 @@ class custom_segmentation:
         self.model.load_weights(model_path, by_name=True)
         return self.model
 
-    def segmentImage(self, image_path, show_bboxes = False, mask_points_values = False, process_frame = False, output_image_name = None, verbose = None):
+    def segmentImage(self, image_path, show_bboxes = False, mask_points_values = False, process_frame = False, output_image_name = None, return_masks = False, verbose = None):
         if process_frame == False:
             image = cv2.imread(image_path)
 
@@ -478,6 +478,7 @@ class custom_segmentation:
         results = self.model.detect([new_img])
 
         r = results[0]
+        masks = None
 
         if show_bboxes == False:
             #By default it returns the boolean pixel values of the mask
@@ -486,31 +487,37 @@ class custom_segmentation:
                 output = display_instances(image, r['rois'], r['masks'], r['class_ids'],self.config.class_names)
             
                 if output_image_name is not None:
-                 cv2.imwrite(output_image_name, output)
-                 print("Processed image saved successfully in your current working directory.")
-
-                return r, output
+                    cv2.imwrite(output_image_name, output)
+                    print("Processed image saved successfully in your current working directory.")
+                
+                    if return_masks == True:
+                        return r, output, r['masks']
+                    else: 
+                        return r, output
 
             ##Return the polygon points' values of the masks
             elif mask_points_values == True:
-               mask = r['masks']
-               contain_val = []
-               for a in range(mask.shape[2]):
-                m = mask[:,:,a]
-                mask_values = Mask(m).polygons()
-                val = mask_values.points
-                contain_val.append(val)
+                mask = r['masks']
+                contain_val = []
+                for a in range(mask.shape[2]):
+                    m = mask[:,:,a]
+                    mask_values = Mask(m).polygons()
+                    val = mask_values.points
+                    contain_val.append(val)
 
 
-               output = display_instances(image, r['rois'], mask, r['class_ids'], self.config.class_names) 
+                output = display_instances(image, r['rois'], mask, r['class_ids'], self.config.class_names) 
                 
-               if output_image_name is not None:
-                cv2.imwrite(output_image_name, output)
-                print("Processed image saved successfully in your current working directory.") 
+                if output_image_name is not None:
+                    cv2.imwrite(output_image_name, output)
+                    print("Processed image saved successfully in your current working directory.") 
 
-               r['masks'] = contain_val  
+                    r['masks'] = contain_val  
               
-               return r, output
+                    if return_masks == True:
+                        return r, output, masks
+                    else:
+                        return r, output
 
 
 
@@ -519,34 +526,40 @@ class custom_segmentation:
             #apply segmentation mask with bounding boxes
             #By default it returns the boolean values of the mask
             if mask_points_values == False:
-              output = display_box_instances(image, r['rois'], r['masks'], r['class_ids'], self.config.class_names, r['scores'])
+                output = display_box_instances(image, r['rois'], r['masks'], r['class_ids'], self.config.class_names, r['scores'])
 
-              if output_image_name is not None:
-               cv2.imwrite(output_image_name, output)
-               print("Processed Image saved successfully in your current working directory.")
-    
-              return r, output   
+                if output_image_name is not None:
+                    cv2.imwrite(output_image_name, output)
+                    print("Processed Image saved successfully in your current working directory.")
+            
+                    if return_masks == True:
+                        return r, output, r['masks']  
+                    else:
+                        return r, output 
             
             ##Return the polygon points' values of the masks
             elif mask_points_values == True:
-               mask = r['masks']
-               contain_val = []
-               for a in range(mask.shape[2]):
-                m = mask[:,:,a]
-                mask_values = Mask(m).polygons()
-                val = mask_values.points
-                contain_val.append(val)
+                mask = r['masks']
+                contain_val = []
+                for a in range(mask.shape[2]):
+                    m = mask[:,:,a]
+                    mask_values = Mask(m).polygons()
+                    val = mask_values.points
+                    contain_val.append(val)
 
 
-               output = display_box_instances(image, r['rois'], mask, r['class_ids'], self.config.class_names, r['scores']) 
+                output = display_box_instances(image, r['rois'], mask, r['class_ids'], self.config.class_names, r['scores']) 
                 
-               if output_image_name is not None:
-                cv2.imwrite(output_image_name, output)
-                print("Processed image saved successfully in your current working directory.") 
+                if output_image_name is not None:
+                    cv2.imwrite(output_image_name, output)
+                    print("Processed image saved successfully in your current working directory.") 
 
-               r['masks'] = contain_val  
-              
-               return r, output
+                    r['masks'] = contain_val  
+               
+                if return_masks == True:
+                    return r, output, r['masks']
+                else:
+                    return r, output
             
 
     def segmentFrame(self, frame, show_bboxes = False, mask_points_values = False, output_image_name = None, verbose= None):

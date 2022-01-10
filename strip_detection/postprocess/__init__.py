@@ -7,11 +7,11 @@ class Strip:
     PAD_THRESHOLD = 0.7
     RATIO_THRESHOLD = 0.6
 
-    def __init__(self, img_path, result, num_pads):
+    def __init__(self, img_path, result, masks, num_pads):
         self.rois = result['rois']
         self.class_ids = result['class_ids']
         self.score = result['scores']
-        self.masks = result['masks']
+        self.masks = masks
         self.num_pads = num_pads
         self.aspect_ratio = self._aspect_ratio()
         self.img = cv2.imread(img_path)
