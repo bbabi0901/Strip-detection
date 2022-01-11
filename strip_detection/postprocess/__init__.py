@@ -7,7 +7,7 @@ class Strip:
     PAD_THRESHOLD = 0.7
     RATIO_THRESHOLD = 0.6
 
-    def __init__(self, img_path, result, masks, num_pads):
+    def __init__(self, img_path, result, masks, num_pads=10):
         self.rois = result['rois']
         self.class_ids = result['class_ids']
         self.score = result['scores']

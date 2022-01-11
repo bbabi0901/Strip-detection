@@ -72,8 +72,11 @@ class instance_custom_training:
         save_json_path1 = os.path.abspath(os.path.join(dataset, "train.json"))
         
         #conversion of individual labelme json files into a single json file        
-        labelme2coco.convert(labelme_folder1, save_json_path1)
-        
+        #labelme2coco.convert(labelme_folder1, save_json_path1)
+        labelme2coco.convert(labelme_folder1, labelme_folder1)
+        coco_dataset_path1 = os.path.abspath(os.path.join(labelme_folder1, "dataset.json"))
+        os.rename(coco_dataset_path1, save_json_path1)
+                
         # Training dataset.
         self.dataset_train = Data()
         self.dataset_train.load_data(save_json_path1, labelme_folder1)
@@ -87,7 +90,11 @@ class instance_custom_training:
         
         
         #conversion of individual labelme json files into a single json file  
-        labelme2coco.convert(labelme_folder2, save_json_path2)
+        #labelme2coco.convert(labelme_folder2, save_json_path2)
+        labelme2coco.convert(labelme_folder2, labelme_folder2)
+        coco_dataset_path2 = os.path.abspath(os.path.join(labelme_folder2, "dataset.json"))
+        os.rename(coco_dataset_path2, save_json_path2)
+        
         
         # Training dataset.
         self.dataset_test = Data()
@@ -110,13 +117,13 @@ class instance_custom_training:
         plt.show()
             
 
-    def train_model(self,num_epochs,path_trained_models,  layers = "all", augmentation = False):
+    def train_model(self, num_epochs, path_trained_models, layers = "all", augmentation = False):
         if augmentation == False:
     
             print('Train %d' % len(self.dataset_train.image_ids), "images")
             print('Validate %d' % len(self.dataset_test.image_ids), "images")
             print("No augmentation")
-            self.model.train(self.dataset_train, self.dataset_test,models = path_trained_models,  epochs=num_epochs,layers=layers)
+            self.model.train(self.dataset_train, self.dataset_test, models = path_trained_models,  epochs=num_epochs,layers=layers)
 
         else:
             augmentation = imgaug.augmenters.Sometimes(0.5, [
