@@ -40,7 +40,7 @@ train_mrcnn.load_dataset("dataset")
 train_mrcnn.train_model(num_epochs=300, augmentation=True, path_trained_models="model/mask_rcnn_models")
 ```
 
-## Detection
+## Inferencing
 After training the model, you can check the performance of your model on different image from the dataset.
 
 
@@ -58,7 +58,10 @@ result, output, masks = seg.segmentImage("sample_image.jpg", show_bboxes=True, m
 
 ![img1](images/detection2.jpg)
 
-## Circles
+## Postprocess
+훈련은 어느 방식으로 해도 상관없지만 postprocess를 위해선 같이 업로드된 커스텀된 Pixellib을 사용한다. 그래야 후처리에 필요한 data를 뽑아올 수 있음.
+
+### Circles
 각 패드의 중앙에 표시되는 원을 통해 패드를 올바르게 인식하고 있는지 확인할 수 있다.
 
 ![img1](images/sample2.jpg)
@@ -78,7 +81,7 @@ img = pp.check_pad()
 
 ![img2](images/check_pad2.jpg)
 
-## Cut
+### Cut
 촬영된 이미지에서 다양한 각도로 기울어져 있는 스트립을 추출하여 일정한 형태로 가공할 수 있다. 
 ```python
 from instance import custom_segmentation
