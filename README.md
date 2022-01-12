@@ -16,10 +16,8 @@
 
 # Training
 First, you need to prepare a dataset through the annotation tool called [Labelme](https://github.com/wkentaro/labelme). 
-Then, follow the [tutorials](https://github.com/ayoolaolafenwa/PixelLib/blob/master/Tutorials/custom_train.md) on loading and training with custom dataset.
-One thing to note, it is recommended to load and train your dataset through the uploaded Pixellib.
-Because, currently, the versions between Labelme2coco and Pixellib are not compatible. 
- 
+Then, follow the [tutorials](https://github.com/ayoolaolafenwa/PixelLib/blob/master/Tutorials/custom_train.md) on loading and training with custom dataset. 
+One thing to note is that the versions between Labelme2coco and Pixellib are not compatible so it is recommended to load and train your dataset through the uploaded Pixellib.
 
 ```python
 from custom_training import instance_custom_training
