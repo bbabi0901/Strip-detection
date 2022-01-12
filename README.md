@@ -5,29 +5,21 @@
     <td><img src="images/detection.jpg"></td>
     <td><img src="images/check_pad.jpg"></td>
   </tr>
-  
- </table>
+</table>
 
-The project contains:
-1. Urinalysis strip detection with [Pixellib](https://github.com/ayoolaolafenwa/PixelLib) and [MaskRCNN](https://github.com/matterport/Mask_RCNN)
-2. Postprocess using the result of detection
+## The project contains:
+1. Custom training for urinalysis strip detection through [Pixellib](https://github.com/ayoolaolafenwa/PixelLib) and [MaskRCNN](https://github.com/matterport/Mask_RCNN)
+2. Urinalysis strip detection with the trained model.
+3. Postprocess using the result of detection
 
 
 
-## Training
-There are two version of Pixellib to train the model with the custom dataset.
-
-1. Original [Pixellib](https://github.com/ayoolaolafenwa/PixelLib).
-2. The one i have customed.  
-  
-If you choose to train in the first way, you must install Pixellib first.
-
-```
-!pip install pixellib
-```
-And check the tutorials for custom train [here](https://github.com/ayoolaolafenwa/PixelLib/blob/master/Tutorials/custom_train.md). You can use the latest version of Pixellib.  
-
-I have customed bc version hohwan btwn Labelme2coco and Pixellib. I have also found some errors bco version when building a model with Mask-RCNN.
+# Training
+First, you need to prepare a dataset through the annotation tool called [Labelme](https://github.com/wkentaro/labelme). 
+Then, follow the [tutorials](https://github.com/ayoolaolafenwa/PixelLib/blob/master/Tutorials/custom_train.md) on loading and training with custom dataset.
+One thing to note, it is recommended to load and train your dataset through the uploaded Pixellib.
+Because, currently, the versions between Labelme2coco and Pixellib are not compatible. 
+ 
 
 ```python
 from custom_training import instance_custom_training
@@ -36,15 +28,21 @@ import tensorflow as tf
 train_mrcnn = instance_custom_training()
 train_mrcnn.modelConfig(network_backbone="resnet101", num_classes=2, batch_size=2, detection_threshold=0.7)
 train_mrcnn.load_pretrained_model("model/mask_rcnn_coco.h5")
-train_mrcnn.load_dataset("dataset")
+train_mrcnn.load_dataset("urinalysis_strip_dataset")
 train_mrcnn.train_model(num_epochs=300, augmentation=True, path_trained_models="model/mask_rcnn_models")
 ```
 
-## Inferencing
+# Inferencing
 After training the model, you can check the performance of your model on different image from the dataset.
 
+<table>
+  <tr>
+    <td><img src="images/sample2.jpg"></td>
+    <td><img src="images/detection2.jpg"></td>
+  </tr>
+</table>
 
-![img1](images/sample2.jpg)
+
 
 ```python
 from instance import custom_segmentation
@@ -56,15 +54,19 @@ seg.load_model("MaskRCNN_resnet101.h5")
 result, output, masks = seg.segmentImage("sample_image.jpg", show_bboxes=True, mask_points_value=True, return_masks=True)
 ```
 
-![img1](images/detection2.jpg)
 
-## Postprocess
-훈련은 어느 방식으로 해도 상관없지만 postprocess를 위해선 같이 업로드된 커스텀된 Pixellib을 사용한다. 그래야 후처리에 필요한 data를 뽑아올 수 있음.
+# Postprocess
+Use the customed Pixellib uploaded to extract the mask value for the postprocess.
 
-### Circles
-각 패드의 중앙에 표시되는 원을 통해 패드를 올바르게 인식하고 있는지 확인할 수 있다.
+## Circles
+You can check wheter each pad is detected correctly through the circle displayed in the center of each pad.
 
-![img1](images/sample2.jpg)
+<table>
+  <tr>
+    <td><img src="images/sample3.jpg"></td>
+    <td><img src="images/check_pad2.jpg"></td>
+  </tr>
+</table>
 
 ```python
 from instance import custom_segmentation
@@ -79,10 +81,12 @@ pp = Strip("sample_image.jpg", result, masks, num_pads=10)
 img = pp.check_pad()
 ```
 
-![img2](images/check_pad2.jpg)
 
-### Cut
-촬영된 이미지에서 다양한 각도로 기울어져 있는 스트립을 추출하여 일정한 형태로 가공할 수 있다. 
+## Cut
+Strips can be photographed at various angles and sizes. You can extract the strip excluding the background and edit to certain angle and size.  
+
+![img3](images/sample4.jpg)
+
 ```python
 from instance import custom_segmentation
 from postprocess import Strip
@@ -96,8 +100,9 @@ pp = Strip("sample_image.jpg", result, masks, num_pads=10)
 img = pp.cut_strip()
 ```
 
-![img2](images/cut_strip.jpg)
+![cut_strip](images/cut_strip.jpg)
 
 ## References
 1. PixelLib, https://github.com/ayoolaolafenwa/PixelLib
-2. Matterport, Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow https://github.com/matterport/Mask_RCNN 
+2. Labelme, https://github.com/wkentaro/labelme
+3. Matterport, Mask R-CNN for object detection and instance segmentation on Keras and TensorFlow https://github.com/matterport/Mask_RCNN 
